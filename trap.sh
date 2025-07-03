@@ -1,50 +1,70 @@
 #!/bin/bash
 
-echo "🐍 Saint Khen (@admirkhen) — Trap Deployment (Proot-distro)"
-echo "twitter.com/admirkhen"
-echo ""
-
 # ----------------------------------------------
-# ✅ NO SUDO! Termux / proot-distro doesn't use sudo
+# 🚀 I see you lol
 # ----------------------------------------------
 
-# Update and install deps
-apt-get update && apt-get upgrade -y
-apt-get install -y curl git build-essential make gcc lz4 jq nano automake autoconf tmux htop unzip pkg-config libssl-dev libleveldb-dev clang bsdmainutils ncdu
+echo "==========================================="
+echo "   🚀 DROSERA HOODI VPS/PC TRAP FULL AUTO-SETUP 🚀"
+echo "==========================================="
+echo "   🧡 SAINT KHEN @admirkhen on X"
+echo "==========================================="
 
-# Drosera CLI
+sleep 1
+
+echo "👉 Updating system..."
+sudo apt-get update && sudo apt-get upgrade -y
+
+echo "👉 Purging and reinstalling curl..."
+sudo apt-get purge curl -y
+sudo apt-get install curl -y
+
+echo "👉 Installing dependencies..."
+sudo apt install ufw iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip -y
+
+echo "👉 Installing Drosera CLI..."
 curl -L https://app.drosera.io/install | bash
 
-# Foundry CLI
+echo "👉 Installing Foundry..."
 curl -L https://foundry.paradigm.xyz | bash
 
-# Bun
+echo "👉 Installing Bun..."
 curl -fsSL https://bun.sh/install | bash
 
-# ✅ Manually export PATH for this same session
-export PATH=$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
+# ✅ Export paths for this session
+export PATH=$HOME/.drosera/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
 
-# Install Drosera
-droseraup
+# ✅ Make sure the binaries are reachable
+source ~/.bashrc
 
-# Install Foundry
-foundryup
-
-# Create workspace
+# 🗂️ Set up trap workspace
+echo "👉 Setting up trap workspace..."
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
-# Git config (edit to your info)
-git config --global user.email "youremail@example.com"
-git config --global user.name "yourgithubname"
+echo "👉 Git config..."
+read -p "Enter your GitHub email: " GIT_EMAIL
+read -p "Enter your GitHub username: " GIT_NAME
+git config --global user.email "$GIT_EMAIL"
+git config --global user.name "$GIT_NAME"
 
-# Init trap template
+echo "👉 Initializing project from Drosera template..."
 forge init -t drosera-network/trap-foundry-template
 
 bun install
 forge build
 
-# Generate drosera.toml
+# Get user-specific config
+read -p "👉 Enter your operator wallet address: " OP_WALLET
+read -p "👉 Are you an existing trap user? (y/n): " EXISTING
+
+TRAP_ADDR_LINE=""
+if [[ "$EXISTING" == "y" || "$EXISTING" == "Y" ]]; then
+  read -p "👉 Enter your existing trap address: " TRAP_ADDR
+  TRAP_ADDR_LINE="address = \"$TRAP_ADDR\""
+fi
+
+# Create drosera.toml dynamically
 cat <<EOF > drosera.toml
 ethereum_rpc = "https://ethereum-hoodi-rpc.publicnode.com"
 drosera_rpc = "https://relay.hoodi.drosera.io"
@@ -62,17 +82,23 @@ min_number_of_operators = 1
 max_number_of_operators = 2
 block_sample_size = 10
 private_trap = true
-whitelist = ["YOUR_OPERATOR_WALLET_ADDRESS"]
-
-# If existing, uncomment:
-# address = "PASTE_EXISTING_TRAP_ADDRESS_HERE"
+whitelist = ["$OP_WALLET"]
+$TRAP_ADDR_LINE
 EOF
 
-echo "✅ drosera.toml created!"
+echo "✅ drosera.toml created automatically!"
+cat drosera.toml
 
-# Prompt for private key & apply trap
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
 
-DROSERA_PRIVATE_KEY="$PRIVATE_KEY" drosera apply
+# ✅ USE absolute path so it NEVER fails:
+DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $HOME/.drosera/bin/drosera apply
 
-echo "✅ Trap deployed."
+echo "==========================================="
+echo "✅ Trap applied automatically!"
+echo "👉 If NEW, copy your trap address output."
+echo "👉 If EXISTING, your trap config is updated!"
+echo "👉 You can boost later with:"
+echo "drosera bloomboost --trap-address <trap_address> --eth-amount <amount>"
+echo "==========================================="
+echo "🎉 ALL DONE! 🚀"
