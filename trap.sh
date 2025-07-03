@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
 
 echo "==========================================="
-echo "   🚀 DROSERA HOODI FULL TRAP (TERMUX / PROOT)"
+echo "   🚀 DROSERA HOODI FULL TRAP (PROOT-DISTRO)"
 echo "==========================================="
 echo "   🧡 SAINT KHEN @admirkhen on X"
 echo "==========================================="
-
-# ----------------------------------------------
-# ✅ Termux/Proot Distro: NO sudo.
-# ----------------------------------------------
 
 echo "👉 Updating packages..."
 apt-get update && apt-get upgrade -y
@@ -19,29 +15,31 @@ apt-get install -y curl git build-essential make gcc lz4 jq nano automake autoco
 echo "👉 Installing Drosera CLI..."
 curl -L https://app.drosera.io/install | bash
 
-echo "👉 Installing Foundry..."
+echo "👉 Installing Foundry CLI..."
 curl -L https://foundry.paradigm.xyz | bash
 
 echo "👉 Installing Bun..."
 curl -fsSL https://bun.sh/install | bash
 
 echo ""
-echo "✅ Sourcing /root/.bashrc NOW..."
-source /root/.bashrc
+echo "✅ Sourcing all known bashrc..."
+source /root/.bashrc || true
+source ~/.bashrc || true
+source $HOME/.bashrc || true
 
 echo ""
-echo "✅ Running droseraup NOW..."
+echo "✅ Running droseraup..."
 droseraup
 
 echo ""
-echo "✅ Running foundryup NOW..."
+echo "✅ Running foundryup..."
 foundryup
 
 echo "👉 Setting up trap workspace..."
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
-echo "👉 Git config (edit for yourself)"
+echo "👉 Git config (change this yourself)"
 git config --global user.email "youremail@example.com"
 git config --global user.name "yourgithubusername"
 
