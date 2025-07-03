@@ -4,31 +4,41 @@ echo "🐍 Saint Khen (@admirkhen) — Trap Deployment (Proot-distro)"
 echo "twitter.com/admirkhen"
 echo ""
 
-# Install essentials (only run once if needed)
-sudo apt-get update && sudo apt-get upgrade -y
-sudo apt-get install curl git build-essential make gcc lz4 jq nano automake autoconf tmux htop unzip pkg-config libssl-dev libleveldb-dev clang bsdmainutils ncdu -y
+# ----------------------------------------------
+# ✅ NO SUDO! Termux / proot-distro doesn't use sudo
+# ----------------------------------------------
+
+# Update and install deps
+apt-get update && apt-get upgrade -y
+apt-get install -y curl git build-essential make gcc lz4 jq nano automake autoconf tmux htop unzip pkg-config libssl-dev libleveldb-dev clang bsdmainutils ncdu
 
 # Drosera CLI
 curl -L https://app.drosera.io/install | bash
-source ~/.bashrc
-droseraup
 
 # Foundry CLI
 curl -L https://foundry.paradigm.xyz | bash
-source ~/.bashrc
-foundryup
 
 # Bun
 curl -fsSL https://bun.sh/install | bash
-source ~/.bashrc
 
-# Clone & prepare trap
+# ✅ Manually export PATH for this same session
+export PATH=$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
+
+# Install Drosera
+droseraup
+
+# Install Foundry
+foundryup
+
+# Create workspace
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
+# Git config (edit to your info)
 git config --global user.email "youremail@example.com"
 git config --global user.name "yourgithubname"
 
+# Init trap template
 forge init -t drosera-network/trap-foundry-template
 
 bun install
@@ -63,6 +73,6 @@ echo "✅ drosera.toml created!"
 # Prompt for private key & apply trap
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
 
-DROSERA_PRIVATE_KEY="$PRIVATE_KEY" drosera apply <<< "ofc"
+DROSERA_PRIVATE_KEY="$PRIVATE_KEY" drosera apply
 
 echo "✅ Trap deployed."
