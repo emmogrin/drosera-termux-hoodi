@@ -30,9 +30,9 @@ A single stop for:
 
 | File | Purpose |
 | ---- | ------- |
-| `trap-setup.sh` | Deploy your Trap from your phone |
-| `operator-setup.sh` | Setup & run Drosera Operator on ARM |
-| `immortal.sh` | Immortalize your Discord username |
+| `trap.sh` | Deploy your Trap from your phone |
+| `operator.sh` | Setup & run Drosera Operator on ARM |
+| `immortalize.sh` | Immortalize your Discord username |
 | `drosera.toml` | Auto-managed config file (handled by scripts) |
 
 
