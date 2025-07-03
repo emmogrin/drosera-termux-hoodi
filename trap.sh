@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "🐍 Saint Khen (@admirkhen) — Trap Deployment (Proot-distro SAFE)"
+echo "🐍 Saint Khen (@admirkhen) — Trap Deployment (Proot-distro CLEAN)"
 echo "twitter.com/admirkhen"
 echo ""
 
@@ -24,20 +24,18 @@ echo ""
 echo "👉 Installing Bun..."
 curl -fsSL https://bun.sh/install | bash
 
-# ----------------------------------------------
-# ✅ Export absolute tool paths — hard coded!
-# ----------------------------------------------
-
-export FOUNDRY_BIN="$HOME/.foundry/bin"
-export BUN_BIN="$HOME/.bun/bin"
-export DROSERA_BIN="$HOME/.local/bin"
-
-export PATH="$FOUNDRY_BIN:$BUN_BIN:$DROSERA_BIN:$PATH"
+echo ""
+echo "👉 Reminder: If commands are missing, run:"
+echo "   source ~/.bashrc"
+echo "   Or restart the shell to load droseraup, foundryup, forge, bun"
 
 echo ""
-echo "👉 Checking versions..."
-$DROSERA_BIN/droseraup
-$FOUNDRY_BIN/foundryup
+echo "👉 Updating Drosera..."
+droseraup
+
+echo ""
+echo "👉 Updating Foundry..."
+foundryup
 
 # ----------------------------------------------
 # ✅ Create workspace
@@ -55,10 +53,10 @@ git config --global user.name "$GIT_NAME"
 
 echo ""
 echo "👉 Initializing project from Drosera template..."
-$FOUNDRY_BIN/forge init -t drosera-network/trap-foundry-template
+forge init -t drosera-network/trap-foundry-template
 
-$BUN_BIN/bun install
-$FOUNDRY_BIN/forge build
+bun install
+forge build
 
 # ----------------------------------------------
 # ✅ Build drosera.toml
@@ -98,14 +96,14 @@ echo ""
 echo "✅ drosera.toml created!"
 
 # ----------------------------------------------
-# ✅ Deploy trap with absolute Drosera path
+# ✅ Deploy trap (you must have source'd .bashrc if needed)
 # ----------------------------------------------
 
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
-DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $DROSERA_BIN/drosera apply
+DROSERA_PRIVATE_KEY="$PRIVATE_KEY" drosera apply
 
 echo ""
 echo "==========================================="
-echo "✅ Trap deployed with full absolute PATH!"
+echo "✅ Trap deployed."
 echo "Saint Khen watches over you 🧡"
 echo "==========================================="
