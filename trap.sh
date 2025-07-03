@@ -1,60 +1,63 @@
 #!/bin/bash
 
-echo "🐍 Saint Khen (@admirkhen) — Trap Deployment (Proot-distro)"
+echo "⚙️ Saint Khen (@admirkhen) — Bulletproof Drosera Trap (Proot-distro)"
 echo "twitter.com/admirkhen"
 echo ""
+
+# 🔒 Indestructible PATH
+export PATH=$HOME/.local/bin:$HOME/.foundry/bin:$HOME/.bun/bin:/usr/local/bin:/usr/bin:/bin:/data/data/com.termux/files/usr/bin:$PATH
+source ~/.bashrc
+
+echo "👉 PATH is now: $PATH"
 
 # ----------------------------------------------
 # ✅ NO SUDO! Termux / proot-distro doesn't use sudo
 # ----------------------------------------------
 
-echo "👉 Updating & installing dependencies..."
+# Update & install deps
 apt-get update && apt-get upgrade -y
 apt-get install -y curl git build-essential make gcc lz4 jq nano automake autoconf tmux htop unzip pkg-config libssl-dev libleveldb-dev clang bsdmainutils ncdu
 
-echo "👉 Installing Drosera CLI..."
+# Install Drosera CLI
 curl -L https://app.drosera.io/install | bash
-
-echo "👉 Installing Foundry CLI..."
-curl -L https://foundry.paradigm.xyz | bash
-
-echo "👉 Installing Bun..."
-curl -fsSL https://bun.sh/install | bash
-
-# ✅ Make sure PATH is correct for this session
-export PATH=$HOME/.local/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
-
-# ✅ Also source .bashrc in case install script wrote to it
 source ~/.bashrc
-
-echo "👉 Updating Drosera..."
 droseraup
 
-echo "👉 Updating Foundry..."
+# Install Foundry CLI
+curl -L https://foundry.paradigm.xyz | bash
+source ~/.bashrc
 foundryup
 
-echo "👉 Setting up trap workspace..."
+# Install Bun
+curl -fsSL https://bun.sh/install | bash
+source ~/.bashrc
+
+# ✅ Re-apply PATH to ensure all tools resolve
+export PATH=$HOME/.local/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
+
+# Setup workspace
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
-echo "👉 Git config..."
-read -p "Enter your GitHub email: " GIT_EMAIL
-read -p "Enter your GitHub username: " GIT_NAME
+# Git config
+read -p "📧 Enter your GitHub email: " GIT_EMAIL
+read -p "👤 Enter your GitHub username: " GIT_NAME
 git config --global user.email "$GIT_EMAIL"
 git config --global user.name "$GIT_NAME"
 
-echo "👉 Initializing Drosera Foundry template..."
+# Init trap template
 forge init -t drosera-network/trap-foundry-template
 
 bun install
 forge build
 
-read -p "👉 Enter your operator wallet address: " OP_WALLET
-read -p "👉 Are you an existing trap user? (y/n): " EXISTING
+# Create drosera.toml
+read -p "💼 Enter your operator wallet address: " OP_WALLET
+read -p "🧩 Existing trap? (y/n): " EXISTING
 
 TRAP_ADDR_LINE=""
 if [[ "$EXISTING" == "y" || "$EXISTING" == "Y" ]]; then
-  read -p "👉 Enter your existing trap address: " TRAP_ADDR
+  read -p "🔗 Enter your existing trap address: " TRAP_ADDR
   TRAP_ADDR_LINE="address = \"$TRAP_ADDR\""
 fi
 
@@ -80,12 +83,9 @@ $TRAP_ADDR_LINE
 EOF
 
 echo "✅ drosera.toml created!"
-cat drosera.toml
 
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
-
-# ✅ Always use the full path to drosera to be safe
-DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $HOME/.local/bin/drosera apply
+DROSERA_PRIVATE_KEY="$PRIVATE_KEY" drosera apply
 
 echo "==========================================="
 echo "✅ Trap deployed successfully!"
