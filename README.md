@@ -77,7 +77,7 @@ apt update && apt upgrade -y
 ```
 ```
 apt install -y curl git build-essential
-
+```
 🪜 **Step 0: Clone this repo inside your `proot-distro`**
 
 ```bash
