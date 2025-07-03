@@ -78,33 +78,59 @@ apt update && apt upgrade -y
 ```
 apt install -y curl git build-essential
 ```
-🪜 **Step 0: Clone this repo inside your `proot-distro`**
+🪜 **Step 0: Install CLI 
+# Drosera CLI
+```
+curl -L https://app.drosera.io/install | bash
+source ~/.bashrc
+droseraup
+```
 
-```bash
-git clone https://github.com/emmogrin/drosera-termux-hoodi.git
-cd drosera-termux-hoodi
+# Foundry CLI (Solidity development)
+```
+curl -L https://foundry.paradigm.xyz | bash
+source ~/.bashrc
+foundryup
+```
+# Bun (JavaScript runtime)
+```
+curl -fsSL https://bun.sh/install | bash
+source ~/.bashrc
+```
+```
+mkdir ~/my-drosera-trap
+cd ~/my-drosera-trap
+```
+
+switch those fields into your actual gmail and username then paste
+```
+git config --global user.email "your_github_email@example.com"
+git config --global user.name "your_github_username"
+
+forge init -t drosera-network/trap-foundry-template
+```
+```
+bun install
+forge build
+```
+```                                                           
+wget -O setup.sh https://raw.githubusercontent.com/emmogrin/drosera-termux-hoodi/main/setup.sh
+wget -O trap.sh https://raw.githubusercontent.com/emmogrin/drosera-termux-hoodi/main/trap.sh
+wget -O operator.sh https://raw.githubusercontent.com/emmogrin/drosera-termux-hoodi/main/operator.sh
+wget -O toml.sh https://raw.githubusercontent.com/emmogrin/drosera-termux-hoodi/main/toml.sh
+wget -O immortalize.sh https://raw.githubusercontent.com/emmogrin/drosera-termux-hoodi/main/immortalize.sh
 chmod +x *.sh
 ```
-
+This asks for your wallet address and if you are an existing user (enter n if its your First-Time using hoodi)
+```
+./toml.sh
+```
 ---
 
-🧲 Step 1: Deploy Your Trap
+Apply trap config. (Switch your_eth_private_key_here with your real private key)
 ```
-./trap.sh
+DROSERA_PRIVATE_KEY=your_eth_private_key_here drosera apply
 ```
-📋 You’ll be prompted for:
-
-Your GitHub email
-
-Your GitHub username
-
-Your Hoodi EVM RPC URL (from Alchemy, QuickNode or PublicNode)
-
-Your EVM private key (funded with a bit of Hoodi ETH)
-
-
-✅ This sets up your trap & creates drosera.toml automatically.
-
 
 ---
 
@@ -119,9 +145,6 @@ Your same EVM private key
 Your external IP address (can be found at whatismyipaddress.com)
 
 Your Trap address (from previous step)
-
-
-⚡ Once done, run your operator in tmux to keep it alive!
 
 
 ---
