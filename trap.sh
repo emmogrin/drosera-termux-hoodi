@@ -1,83 +1,69 @@
 #!/bin/bash
 
-echo "⚙️ Saint Khen (@admirkhen) — Trap Setup (Proot-distro, NO PATH)"
+echo "🐍 Saint Khen (@admirkhen) — Trap Deployment (Proot-distro SAFE)"
 echo "twitter.com/admirkhen"
 echo ""
 
-# --------------------------------------------------------
-# ✅ 1. Update & install essentials
-# --------------------------------------------------------
+# ----------------------------------------------
+# ✅ NO SUDO! Termux / proot-distro doesn't use sudo
+# ----------------------------------------------
+
+# Update and install deps
 apt-get update && apt-get upgrade -y
 apt-get install -y curl git build-essential make gcc lz4 jq nano automake autoconf tmux htop unzip pkg-config libssl-dev libleveldb-dev clang bsdmainutils ncdu
 
-# --------------------------------------------------------
-# ✅ 2. Install Drosera CLI
-# --------------------------------------------------------
+echo ""
 echo "👉 Installing Drosera CLI..."
 curl -L https://app.drosera.io/install | bash
 
-# --------------------------------------------------------
-# ✅ 3. Install Foundry
-# --------------------------------------------------------
+echo ""
 echo "👉 Installing Foundry..."
 curl -L https://foundry.paradigm.xyz | bash
 
-# --------------------------------------------------------
-# ✅ 4. Install Bun
-# --------------------------------------------------------
+echo ""
 echo "👉 Installing Bun..."
 curl -fsSL https://bun.sh/install | bash
 
-# --------------------------------------------------------
-# ✅ 5. Detect droseraup absolute location & run it directly
-# --------------------------------------------------------
-echo "👉 Checking Drosera installer..."
-if [ -f "$HOME/.local/bin/droseraup" ]; then
-  $HOME/.local/bin/droseraup
-elif [ -f "$HOME/.cargo/bin/droseraup" ]; then
-  $HOME/.cargo/bin/droseraup
-else
-  echo "❌ droseraup not found in known paths!"
-  exit 1
-fi
+# ----------------------------------------------
+# ✅ Export absolute tool paths — hard coded!
+# ----------------------------------------------
 
-# --------------------------------------------------------
-# ✅ 6. Foundry direct run
-# --------------------------------------------------------
-if [ -f "$HOME/.foundry/bin/foundryup" ]; then
-  $HOME/.foundry/bin/foundryup
-else
-  echo "❌ foundryup not found!"
-  exit 1
-fi
+export FOUNDRY_BIN="$HOME/.foundry/bin"
+export BUN_BIN="$HOME/.bun/bin"
+export DROSERA_BIN="$HOME/.local/bin"
 
-# --------------------------------------------------------
-# ✅ 7. Create Trap Workspace
-# --------------------------------------------------------
-echo "👉 Setting up trap workspace..."
+export PATH="$FOUNDRY_BIN:$BUN_BIN:$DROSERA_BIN:$PATH"
+
+echo ""
+echo "👉 Checking versions..."
+$DROSERA_BIN/droseraup
+$FOUNDRY_BIN/foundryup
+
+# ----------------------------------------------
+# ✅ Create workspace
+# ----------------------------------------------
+
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
-# --------------------------------------------------------
-# ✅ 8. Git Config
-# --------------------------------------------------------
+echo ""
+echo "👉 Git config..."
 read -p "Enter your GitHub email: " GIT_EMAIL
 read -p "Enter your GitHub username: " GIT_NAME
 git config --global user.email "$GIT_EMAIL"
 git config --global user.name "$GIT_NAME"
 
-# --------------------------------------------------------
-# ✅ 9. Init Trap Template
-# --------------------------------------------------------
-echo "👉 Initializing Drosera trap..."
-$HOME/.foundry/bin/forge init -t drosera-network/trap-foundry-template
+echo ""
+echo "👉 Initializing project from Drosera template..."
+$FOUNDRY_BIN/forge init -t drosera-network/trap-foundry-template
 
-$HOME/.bun/bin/bun install
-$HOME/.foundry/bin/forge build
+$BUN_BIN/bun install
+$FOUNDRY_BIN/forge build
 
-# --------------------------------------------------------
-# ✅ 10. Generate drosera.toml
-# --------------------------------------------------------
+# ----------------------------------------------
+# ✅ Build drosera.toml
+# ----------------------------------------------
+
 read -p "👉 Enter your operator wallet address: " OP_WALLET
 read -p "👉 Are you an existing trap user? (y/n): " EXISTING
 
@@ -108,24 +94,18 @@ whitelist = ["$OP_WALLET"]
 $TRAP_ADDR_LINE
 EOF
 
+echo ""
 echo "✅ drosera.toml created!"
-cat drosera.toml
 
-# --------------------------------------------------------
-# ✅ 11. Apply Trap
-# --------------------------------------------------------
+# ----------------------------------------------
+# ✅ Deploy trap with absolute Drosera path
+# ----------------------------------------------
+
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
+DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $DROSERA_BIN/drosera apply
 
-if [ -f "$HOME/.local/bin/drosera" ]; then
-  DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $HOME/.local/bin/drosera apply
-elif [ -f "$HOME/.cargo/bin/drosera" ]; then
-  DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $HOME/.cargo/bin/drosera apply
-else
-  echo "❌ drosera binary not found!"
-  exit 1
-fi
-
+echo ""
 echo "==========================================="
-echo "✅ Trap deployed successfully!"
-echo "Saint Khen watches over you. 🧡"
+echo "✅ Trap deployed with full absolute PATH!"
+echo "Saint Khen watches over you 🧡"
 echo "==========================================="
