@@ -1,44 +1,41 @@
 #!/bin/bash
 
-# ----------------------------------------------
-# 🚀 I see you lol
-# ----------------------------------------------
+echo "🐍 Saint Khen (@admirkhen) — Trap Deployment (Proot-distro)"
+echo "twitter.com/admirkhen"
+echo ""
+echo "============================================"
+echo "   ⚙️ Fully Automated Trap Setup (Termux/proot-distro)"
+echo "============================================"
 
-echo "==========================================="
-echo "   🚀 DROSERA HOODI VPS/PC TRAP FULL AUTO-SETUP 🚀"
-echo "==========================================="
-echo "   🧡 SAINT KHEN @admirkhen on X"
-echo "==========================================="
-
-sleep 1
+# ----------------------------------------------
+# ✅ Termux / proot-distro — NO SUDO, no purge
+# ----------------------------------------------
 
 echo "👉 Updating system..."
-sudo apt-get update && sudo apt-get upgrade -y
-
-echo "👉 Purging and reinstalling curl..."
-sudo apt-get purge curl -y
-sudo apt-get install curl -y
+apt-get update && apt-get upgrade -y
 
 echo "👉 Installing dependencies..."
-sudo apt install ufw iptables build-essential git wget lz4 jq make gcc nano automake autoconf tmux htop nvme-cli libgbm1 pkg-config libssl-dev libleveldb-dev tar clang bsdmainutils ncdu unzip -y
+apt-get install -y curl git build-essential make gcc lz4 jq nano automake autoconf tmux htop unzip pkg-config libssl-dev libleveldb-dev clang bsdmainutils ncdu
 
 echo "👉 Installing Drosera CLI..."
 curl -L https://app.drosera.io/install | bash
 
-echo "👉 Installing Foundry..."
+echo "👉 Installing Foundry CLI..."
 curl -L https://foundry.paradigm.xyz | bash
 
 echo "👉 Installing Bun..."
 curl -fsSL https://bun.sh/install | bash
 
-# ✅ Export paths for this session
-export PATH=$HOME/.drosera/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
-
-# ✅ Make sure the binaries are reachable
+# ✅ Fix PATH immediately & permanently
+echo 'export PATH=$HOME/.cargo/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH' >> ~/.bashrc
+export PATH=$HOME/.cargo/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
 source ~/.bashrc
 
-# 🗂️ Set up trap workspace
-echo "👉 Setting up trap workspace..."
+# ✅ Update Drosera & Foundry
+droseraup
+foundryup
+
+echo "👉 Creating trap workspace..."
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
@@ -54,8 +51,8 @@ forge init -t drosera-network/trap-foundry-template
 bun install
 forge build
 
-# Get user-specific config
-read -p "👉 Enter your operator wallet address: " OP_WALLET
+# ✅ Create drosera.toml
+read -p "👉 Enter your Operator Wallet Address: " OP_WALLET
 read -p "👉 Are you an existing trap user? (y/n): " EXISTING
 
 TRAP_ADDR_LINE=""
@@ -64,7 +61,6 @@ if [[ "$EXISTING" == "y" || "$EXISTING" == "Y" ]]; then
   TRAP_ADDR_LINE="address = \"$TRAP_ADDR\""
 fi
 
-# Create drosera.toml dynamically
 cat <<EOF > drosera.toml
 ethereum_rpc = "https://ethereum-hoodi-rpc.publicnode.com"
 drosera_rpc = "https://relay.hoodi.drosera.io"
@@ -86,19 +82,15 @@ whitelist = ["$OP_WALLET"]
 $TRAP_ADDR_LINE
 EOF
 
-echo "✅ drosera.toml created automatically!"
+echo "✅ drosera.toml created!"
 cat drosera.toml
 
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
 
-# ✅ USE absolute path so it NEVER fails:
-DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $HOME/.drosera/bin/drosera apply
+DROSERA_PRIVATE_KEY="$PRIVATE_KEY" drosera apply
 
-echo "==========================================="
-echo "✅ Trap applied automatically!"
-echo "👉 If NEW, copy your trap address output."
-echo "👉 If EXISTING, your trap config is updated!"
-echo "👉 You can boost later with:"
-echo "drosera bloomboost --trap-address <trap_address> --eth-amount <amount>"
-echo "==========================================="
-echo "🎉 ALL DONE! 🚀"
+echo ""
+echo "============================================"
+echo "✅ Trap deployed successfully!"
+echo "Saint Khen watches over you. 🧡"
+echo "============================================"
