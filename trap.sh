@@ -1,63 +1,83 @@
 #!/bin/bash
 
-echo "⚙️ Saint Khen (@admirkhen) — Bulletproof Drosera Trap (Proot-distro)"
+echo "⚙️ Saint Khen (@admirkhen) — Trap Setup (Proot-distro)"
 echo "twitter.com/admirkhen"
 echo ""
 
-# 🔒 Indestructible PATH
-export PATH=$HOME/.local/bin:$HOME/.foundry/bin:$HOME/.bun/bin:/usr/local/bin:/usr/bin:/bin:/data/data/com.termux/files/usr/bin:$PATH
-source ~/.bashrc
-
-echo "👉 PATH is now: $PATH"
-
-# ----------------------------------------------
-# ✅ NO SUDO! Termux / proot-distro doesn't use sudo
-# ----------------------------------------------
-
-# Update & install deps
+# --------------------------------------------------------
+# ✅ 1. Update & install essentials
+# --------------------------------------------------------
 apt-get update && apt-get upgrade -y
 apt-get install -y curl git build-essential make gcc lz4 jq nano automake autoconf tmux htop unzip pkg-config libssl-dev libleveldb-dev clang bsdmainutils ncdu
 
-# Install Drosera CLI
+# --------------------------------------------------------
+# ✅ 2. Install Drosera CLI
+# --------------------------------------------------------
+echo "👉 Installing Drosera CLI..."
 curl -L https://app.drosera.io/install | bash
-source ~/.bashrc
-droseraup
 
-# Install Foundry CLI
+# Add to PATH & source
+export PATH=$HOME/.local/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
+source ~/.bashrc
+
+# Use direct call to droseraup
+if [ -f "$HOME/.local/bin/droseraup" ]; then
+  "$HOME/.local/bin/droseraup"
+else
+  echo "❌ droseraup not found!"
+  exit 1
+fi
+
+# --------------------------------------------------------
+# ✅ 3. Install Foundry
+# --------------------------------------------------------
+echo "👉 Installing Foundry..."
 curl -L https://foundry.paradigm.xyz | bash
+export PATH=$HOME/.foundry/bin:$PATH
 source ~/.bashrc
 foundryup
 
-# Install Bun
+# --------------------------------------------------------
+# ✅ 4. Install Bun
+# --------------------------------------------------------
+echo "👉 Installing Bun..."
 curl -fsSL https://bun.sh/install | bash
+export PATH=$HOME/.bun/bin:$PATH
 source ~/.bashrc
 
-# ✅ Re-apply PATH to ensure all tools resolve
-export PATH=$HOME/.local/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
-
-# Setup workspace
+# --------------------------------------------------------
+# ✅ 5. Create Trap Workspace
+# --------------------------------------------------------
+echo "👉 Setting up trap workspace..."
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
-# Git config
-read -p "📧 Enter your GitHub email: " GIT_EMAIL
-read -p "👤 Enter your GitHub username: " GIT_NAME
+# --------------------------------------------------------
+# ✅ 6. Git Config
+# --------------------------------------------------------
+read -p "Enter your GitHub email: " GIT_EMAIL
+read -p "Enter your GitHub username: " GIT_NAME
 git config --global user.email "$GIT_EMAIL"
 git config --global user.name "$GIT_NAME"
 
-# Init trap template
+# --------------------------------------------------------
+# ✅ 7. Init Trap Template
+# --------------------------------------------------------
+echo "👉 Initializing Drosera trap..."
 forge init -t drosera-network/trap-foundry-template
 
 bun install
 forge build
 
-# Create drosera.toml
-read -p "💼 Enter your operator wallet address: " OP_WALLET
-read -p "🧩 Existing trap? (y/n): " EXISTING
+# --------------------------------------------------------
+# ✅ 8. Generate drosera.toml
+# --------------------------------------------------------
+read -p "👉 Enter your operator wallet address: " OP_WALLET
+read -p "👉 Are you an existing trap user? (y/n): " EXISTING
 
 TRAP_ADDR_LINE=""
 if [[ "$EXISTING" == "y" || "$EXISTING" == "Y" ]]; then
-  read -p "🔗 Enter your existing trap address: " TRAP_ADDR
+  read -p "👉 Enter your existing trap address: " TRAP_ADDR
   TRAP_ADDR_LINE="address = \"$TRAP_ADDR\""
 fi
 
@@ -83,9 +103,20 @@ $TRAP_ADDR_LINE
 EOF
 
 echo "✅ drosera.toml created!"
+cat drosera.toml
 
+# --------------------------------------------------------
+# ✅ 9. Apply Trap
+# --------------------------------------------------------
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
-DROSERA_PRIVATE_KEY="$PRIVATE_KEY" drosera apply
+
+# Use direct Drosera path
+if [ -f "$HOME/.local/bin/drosera" ]; then
+  DROSERA_PRIVATE_KEY="$PRIVATE_KEY" "$HOME/.local/bin/drosera" apply
+else
+  echo "❌ drosera binary not found!"
+  exit 1
+fi
 
 echo "==========================================="
 echo "✅ Trap deployed successfully!"
