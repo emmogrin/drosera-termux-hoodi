@@ -11,17 +11,24 @@ Claim your Cadet role and rise through the Drosera ranks. 🗡️
 
 ---
 
-🧱 What’s This?
 
-A single stop for:
+🧱 What’s to do before proceeding?
 
-📌 Deploying your first Trap (on mobile)
+Everything you need to first:
 
-📌 Running your Operator node (ARM64)
+📌 Get faucet 🪙 **Get free Hoodi ETH:** [QuickNode Faucet](https://faucet.quicknode.com/ethereum/hoodi/)
 
-📌 Immortalizing your Discord username, on-chain forever
+📌 **Add Hoodi Testnet to your wallet:** [Chainlist.org](https://chainlist.org/) [tick the include testnet box, and search hoodi.
 
-🏅 Claiming your Cadet Role in Discord
+📌 Get your local IP(Ipv4) this is for those running locally[Check your public IP here](https://whatismyipaddress.com/)
+
+✅️ Get HOODI RPC_URL [Alchemy Dashboard](https://dashboard.alchemy.com/apps/x3e15w6dbehw92s1/networks)
+
+OR use the PUBLIC RPC:
+```
+https://ethereum-hoodi-rpc.publicnode.com
+```
+🏅 Comment understand this post on Twitter for free hoodi eth (giveaway)
 
 
 ---
@@ -30,7 +37,7 @@ A single stop for:
 
 | File | Purpose |
 | ---- | ------- |
-| `trap.sh` | Deploy your Trap from your phone |
+| `toml.sh` | auto setup drosera.toml|
 | `operator.sh` | Setup & run Drosera Operator on ARM |
 | `immortalize.sh` | Immortalize your Discord username |
 | `drosera.toml` | Auto-managed config file (handled by scripts) |
@@ -131,7 +138,8 @@ Apply trap config. (Switch your_eth_private_key_here with your real private key)
 ```
 DROSERA_PRIVATE_KEY=your_eth_private_key_here drosera apply
 ```
-
+😑 Always copy the trap address as indicated below because you'll need it for the next phase
+[![IMG-20250703-WA0005.jpg](https://i.postimg.cc/8cB6jc8g/IMG-20250703-WA0005.jpg)](https://postimg.cc/zHvBQJXx)
 ---
 
 ⚙️ Step 2: Setup Drosera Operator
@@ -187,6 +195,8 @@ cast call 0x25E2CeF36020A736CF8a4D2cAdD2EBE3940F4608 \
 0 2000 \
 --rpc-url https://ethereum-hoodi-rpc.publicnode.com/
 ```
+You should see your username among the output (might take some be patient)
+[![Screenshot-20250703-165223-Termux.jpg](https://i.postimg.cc/4Nn0zyvX/Screenshot-20250703-165223-Termux.jpg)](https://postimg.cc/w78Fz6br)
 ---
 
 💡 Tips
