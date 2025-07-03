@@ -1,6 +1,6 @@
 #!/bin/bash
 
-echo "⚙️ Saint Khen (@admirkhen) — Trap Setup (Proot-distro)"
+echo "⚙️ Saint Khen (@admirkhen) — Trap Setup (Proot-distro, NO PATH)"
 echo "twitter.com/admirkhen"
 echo ""
 
@@ -17,47 +17,49 @@ echo "👉 Installing Drosera CLI..."
 curl -L https://app.drosera.io/install | bash
 
 # --------------------------------------------------------
-# ✅ 3. Force PATH & source shell
+# ✅ 3. Install Foundry
 # --------------------------------------------------------
-export PATH=$HOME/.local/bin:$HOME/.cargo/bin:$HOME/.foundry/bin:$HOME/.bun/bin:$PATH
-source ~/.bashrc
+echo "👉 Installing Foundry..."
+curl -L https://foundry.paradigm.xyz | bash
 
+# --------------------------------------------------------
+# ✅ 4. Install Bun
+# --------------------------------------------------------
+echo "👉 Installing Bun..."
+curl -fsSL https://bun.sh/install | bash
+
+# --------------------------------------------------------
+# ✅ 5. Detect droseraup absolute location & run it directly
+# --------------------------------------------------------
 echo "👉 Checking Drosera installer..."
 if [ -f "$HOME/.local/bin/droseraup" ]; then
-  "$HOME/.local/bin/droseraup"
+  $HOME/.local/bin/droseraup
 elif [ -f "$HOME/.cargo/bin/droseraup" ]; then
-  "$HOME/.cargo/bin/droseraup"
+  $HOME/.cargo/bin/droseraup
 else
   echo "❌ droseraup not found in known paths!"
   exit 1
 fi
 
 # --------------------------------------------------------
-# ✅ 4. Install Foundry
+# ✅ 6. Foundry direct run
 # --------------------------------------------------------
-echo "👉 Installing Foundry..."
-curl -L https://foundry.paradigm.xyz | bash
-export PATH=$HOME/.foundry/bin:$PATH
-source ~/.bashrc
-foundryup
+if [ -f "$HOME/.foundry/bin/foundryup" ]; then
+  $HOME/.foundry/bin/foundryup
+else
+  echo "❌ foundryup not found!"
+  exit 1
+fi
 
 # --------------------------------------------------------
-# ✅ 5. Install Bun
-# --------------------------------------------------------
-echo "👉 Installing Bun..."
-curl -fsSL https://bun.sh/install | bash
-export PATH=$HOME/.bun/bin:$PATH
-source ~/.bashrc
-
-# --------------------------------------------------------
-# ✅ 6. Create Trap Workspace
+# ✅ 7. Create Trap Workspace
 # --------------------------------------------------------
 echo "👉 Setting up trap workspace..."
 mkdir -p ~/my-drosera-trap
 cd ~/my-drosera-trap
 
 # --------------------------------------------------------
-# ✅ 7. Git Config
+# ✅ 8. Git Config
 # --------------------------------------------------------
 read -p "Enter your GitHub email: " GIT_EMAIL
 read -p "Enter your GitHub username: " GIT_NAME
@@ -65,16 +67,16 @@ git config --global user.email "$GIT_EMAIL"
 git config --global user.name "$GIT_NAME"
 
 # --------------------------------------------------------
-# ✅ 8. Init Trap Template
+# ✅ 9. Init Trap Template
 # --------------------------------------------------------
 echo "👉 Initializing Drosera trap..."
-forge init -t drosera-network/trap-foundry-template
+$HOME/.foundry/bin/forge init -t drosera-network/trap-foundry-template
 
-bun install
-forge build
+$HOME/.bun/bin/bun install
+$HOME/.foundry/bin/forge build
 
 # --------------------------------------------------------
-# ✅ 9. Generate drosera.toml
+# ✅ 10. Generate drosera.toml
 # --------------------------------------------------------
 read -p "👉 Enter your operator wallet address: " OP_WALLET
 read -p "👉 Are you an existing trap user? (y/n): " EXISTING
@@ -110,15 +112,14 @@ echo "✅ drosera.toml created!"
 cat drosera.toml
 
 # --------------------------------------------------------
-# ✅ 10. Apply Trap
+# ✅ 11. Apply Trap
 # --------------------------------------------------------
 read -p "🔑 Enter your EVM private key: " PRIVATE_KEY
 
-# Use direct Drosera binary fallback
 if [ -f "$HOME/.local/bin/drosera" ]; then
-  DROSERA_PRIVATE_KEY="$PRIVATE_KEY" "$HOME/.local/bin/drosera" apply
+  DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $HOME/.local/bin/drosera apply
 elif [ -f "$HOME/.cargo/bin/drosera" ]; then
-  DROSERA_PRIVATE_KEY="$PRIVATE_KEY" "$HOME/.cargo/bin/drosera" apply
+  DROSERA_PRIVATE_KEY="$PRIVATE_KEY" $HOME/.cargo/bin/drosera apply
 else
   echo "❌ drosera binary not found!"
   exit 1
