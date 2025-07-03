@@ -81,7 +81,6 @@ apt install -y curl git build-essential
 🪜 **Step 0: Clone this repo inside your `proot-distro`**
 
 ```bash
-apt update && sudo apt install -y git
 git clone https://github.com/emmogrin/drosera-termux-hoodi.git
 cd drosera-termux-hoodi
 chmod +x *.sh
