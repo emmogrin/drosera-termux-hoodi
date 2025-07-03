@@ -39,6 +39,44 @@ A single stop for:
 ---
 
 ⚙️ Setup Instructions (Termux + `proot-distro`)
+Download Termux from F-Droid or playstore
+📲 **Download Termux APK (F-Droid version):** [Termux APK](https://f-droid.org/repo/com.termux_1002.apk)
+
+# in Termux / Android
+# Update package list
+```
+pkg update
+```
+```
+pkg upgrade -y
+```
+# Install required packages
+```
+pkg install proot-distro
+```
+```
+pkg install curl
+```
+```
+pkg install wget
+```
+# Install Ubuntu
+```
+proot-distro install ubuntu
+```
+# Login ubuntu
+```
+proot-distro login ubuntu
+```
+# now inside Ubuntu
+```
+apt install -y
+```
+```
+apt update && apt upgrade -y
+```
+```
+apt install -y curl git build-essential
 
 🪜 **Step 0: Clone this repo inside your `proot-distro`**
 
@@ -119,7 +157,14 @@ cast call 0x25E2CeF36020A736CF8a4D2cAdD2EBE3940F4608 \
 ```
 If it returns true — you are immortal 🧬
 
+OR
 
+```
+cast call 0x25E2CeF36020A736CF8a4D2cAdD2EBE3940F4608 \
+"getDiscordNamesBatch(uint256,uint256)(string[])" \
+0 2000 \
+--rpc-url https://ethereum-hoodi-rpc.publicnode.com/
+```
 ---
 
 💡 Tips
